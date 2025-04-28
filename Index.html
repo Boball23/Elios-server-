@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talk with Elios</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 20px;">
+    <h1>Talk with Elios</h1>
+    <div id="chat-box" style="border:1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; margin-bottom: 10px;"></div>
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Say something..." style="width: 80%; padding: 10px;">
+        <button type="submit" style="padding: 10px;">Send</button>
+    </form><script>
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('user-input');
+    const chatBox = document.getElementById('chat-box');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userMessage = input.value;
+        if (!userMessage.trim()) return;
+
+        chatBox.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
+        input.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        const response = await fetch('/talk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMessage })
+        });
+
+        const data = await response.json();
+        chatBox.innerHTML += `<div><strong>Elios:</strong> ${data.reply}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+</script>
+
+</body>
+</html>
